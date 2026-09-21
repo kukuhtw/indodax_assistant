@@ -403,6 +403,7 @@ Hubungkan `/health` (lewat Nginx bila diperlukan) ke uptime monitor eksternal (U
 | Status order `UNKNOWN` | Kegagalan koneksi ke Indodax setelah order dikirim (hanya relevan saat live trading, yang saat ini dikunci). Order tidak dikirim ulang otomatis — periksa manual. |
 | Container `app` gagal start setelah deploy | Biasanya password database salah/tidak sinkron antara `POSTGRES_PASSWORD` dan `DATABASE_URL`, atau migrasi Alembic gagal — cek `docker compose logs app`. |
 | `/recommend` selalu balas HOLD "OpenAI API belum dikonfigurasi" | `OPENAI_API_KEY` kosong di `.env`. |
+| Log berisi `telegram.error.Conflict: terminated by other getUpdates request` | Ada **lebih dari satu proses** yang polling dengan `TELEGRAM_BOT_TOKEN` yang sama secara bersamaan — misalnya instance lokal (dev) masih jalan dengan token yang sama seperti di VPS, container lama belum mati saat redeploy, atau ada dua deployment (mis. Dokploy + VPS manual) memakai token yang sama. Pastikan hanya satu container `app` yang aktif (`docker compose ps` / cek di Dokploy), matikan instance duplikat, lalu restart. Error ini biasanya reda sendiri dalam beberapa detik setelah poller lama benar-benar berhenti; jika terus muncul, cek juga bahwa command container memakai `exec uvicorn ...` (bukan `uvicorn ...` tanpa `exec`) agar `SIGTERM` diteruskan dengan benar saat container dihentikan. |
 
 Jalankan test dan lint sebelum deploy perubahan kode:
 
