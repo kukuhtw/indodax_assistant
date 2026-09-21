@@ -3,6 +3,8 @@
 Dokumen ini adalah panduan lengkap untuk **instalasi**, **konfigurasi**, **deploy ke VPS**, dan **penggunaan bot di Telegram**. Untuk ringkasan singkat lihat [README.md](../README.md); untuk deploy khusus platform Dokploy lihat [DOKPLOY.md](DOKPLOY.md).
 
 > ⚠️ Aplikasi ini **bukan** penasihat keuangan dan tidak menjanjikan keuntungan. Rekomendasi AI dapat salah. Perdagangan kripto memiliki risiko volatilitas, likuiditas, slippage, dan gangguan API. Saat ini aplikasi **hanya berjalan dalam mode DRY-RUN** (simulasi) — lihat [Batasan mode LIVE](#batasan-mode-live-trading).
+>
+> **Disclaimer afiliasi:** Proyek ini bersifat independen dan **tidak berafiliasi, tidak bekerja sama, tidak disponsori, serta tidak didukung (endorsed) oleh Indodax / PT Indodax Nasional Indonesia** dalam bentuk apa pun. Nama "Indodax" hanya disebut sebagai referensi karena aplikasi ini memanggil [API publik/privat Indodax](https://github.com/btcid/indodax-official-api-docs) yang tersedia untuk umum sebagai pihak ketiga. Merek dagang "Indodax" adalah milik pemiliknya masing-masing. Pengguna bertanggung jawab penuh atas akun, kredensial API, dan aktivitas trading masing-masing; developer aplikasi ini tidak bertanggung jawab atas kerugian, gangguan, atau perubahan API dari pihak Indodax.
 
 ## Daftar isi
 

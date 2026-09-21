@@ -2,6 +2,8 @@
 
 Bot Telegram untuk melihat pasar Indodax, meminta rekomendasi AI, dan menyiapkan limit order dengan konfirmasi. Ini bukan penasihat keuangan dan tidak menjanjikan keuntungan. Rekomendasi dapat salah; perdagangan memiliki risiko volatilitas, likuiditas, slippage, dan gangguan API.
 
+> **Disclaimer:** Proyek ini **independen** dan **tidak berafiliasi, tidak bekerja sama, tidak disponsori, dan tidak didukung (endorsed)** oleh PT Indodax Nasional Indonesia atau Indodax dalam bentuk apa pun. "Indodax" adalah merek dagang milik pemiliknya masing-masing dan disebut di sini semata untuk interoperabilitas, karena aplikasi ini memanggil [API publik Indodax](https://github.com/btcid/indodax-official-api-docs) yang tersedia untuk umum. Segala risiko penggunaan API pihak ketiga, termasuk perubahan atau gangguan API tanpa pemberitahuan, ditanggung sendiri oleh pengguna.
+
 ## Dokumentasi
 
 Panduan lengkap instalasi, konfigurasi, deploy ke VPS, dan cara pakai di Telegram: [docs/PANDUAN-LENGKAP.md](docs/PANDUAN-LENGKAP.md).
