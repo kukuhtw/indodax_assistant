@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 
 from redis.asyncio import Redis
 from sqlalchemy import select
@@ -42,6 +42,9 @@ HELP = (
     '/buy [pair] [harga] [jumlah]\n'
     '/sell [pair] [harga] [jumlah]\n'
     '   <i>contoh:</i> /buy btc_idr 950000000 0.0005\n'
+    'Atau tentukan nominal Rupiah, jumlah koin dihitung otomatis:\n'
+    '/buy [pair] [harga] idr [nominal]\n'
+    '   <i>contoh:</i> /buy btc_idr 950000000 idr 500000\n'
     '/cancel [pair] [id] — batalkan order dry-run\n\n'
 
     '⚠️ <b>Manajemen Risiko</b>\n'
@@ -68,8 +71,8 @@ COMMAND_LIST = [
     ('balance', 'Saldo akun Indodax'),
     ('portfolio', 'Sama seperti /balance'),
     ('recommend', 'Rekomendasi AI, mis: /recommend btc_idr'),
-    ('buy', 'Order beli: /buy [pair] [harga] [jumlah]'),
-    ('sell', 'Order jual: /sell [pair] [harga] [jumlah]'),
+    ('buy', 'Order beli: /buy [pair] [harga] [jumlah] atau idr [nominal]'),
+    ('sell', 'Order jual: /sell [pair] [harga] [jumlah] atau idr [nominal]'),
     ('orders', '10 order terakhir Anda'),
     ('order', 'Detail order: /order [pair] [id]'),
     ('cancel', 'Batalkan order dry-run: /cancel [pair] [id]'),
@@ -177,17 +180,35 @@ async def recommend_command(update, context):
 
 
 async def order_command(update, context, side):
-    if len(context.args) != 3:
-        raise RiskRejected(f'Format: /{side.lower()} <pair> <price> <amount>')
+    args = context.args
+    if len(args) not in (3, 4) or (len(args) == 4 and args[2].lower() != 'idr'):
+        raise RiskRejected(
+            f'Format: /{side.lower()} <pair> <harga> <jumlah>\n'
+            f'atau: /{side.lower()} <pair> <harga> idr <nominal>')
     pair = pair_arg(context)
-    price_value = positive_decimal(context.args[1])
-    amount_value = positive_decimal(context.args[2])
+    auto_note = ''
+    if len(args) == 3:
+        price_value = positive_decimal(args[1])
+        amount_value = positive_decimal(args[2])
+    else:
+        broker, _ = dependencies(context)
+        price_value = positive_decimal(args[1])
+        nominal_value = positive_decimal(args[3])
+        info = await broker.pair_info(pair)
+        if not info:
+            raise RiskRejected('Pair tidak ditemukan')
+        increment = positive_decimal(info.get('quantity_increment', '0.00000001'))
+        steps = (nominal_value / price_value / increment).to_integral_value(rounding=ROUND_DOWN)
+        amount_value = steps * increment
+        if amount_value <= 0:
+            raise RiskRejected('Nominal terlalu kecil untuk menghasilkan jumlah minimum pair ini')
+        auto_note = f'\n(Jumlah dihitung otomatis dari nominal Rp{nominal_value})'
     order_id = await prepare(update.effective_user, pair, side, price_value, amount_value)
     mode = 'LIVE' if settings.live else 'DRY-RUN'
     warning = '\nPERINGATAN: LIVE ORDER menggunakan dana nyata.' if settings.live else ''
     await update.effective_message.reply_text(
         f'Konfirmasi Order #{order_id}\n{side} {pair.upper()}\nHarga: Rp{price_value}\n'
-        f'Jumlah: {amount_value}\nNilai: Rp{price_value * amount_value}\nMode: {mode}{warning}',
+        f'Jumlah: {amount_value}{auto_note}\nNilai: Rp{price_value * amount_value}\nMode: {mode}{warning}',
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton('CONFIRM', callback_data=f'confirm:{order_id}'),
             InlineKeyboardButton('CANCEL', callback_data=f'cancel:{order_id}'),

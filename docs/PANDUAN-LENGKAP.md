@@ -301,8 +301,8 @@ Semua perintah hanya bisa dipakai oleh Telegram user ID yang ada di `TELEGRAM_AL
 | `/balance` | `/balance` | Saldo akun Indodax (butuh `INDODAX_API_KEY`/`SECRET`). |
 | `/portfolio` | `/portfolio` | Alias dari `/balance`. |
 | `/recommend` | `/recommend <pair>` | Minta rekomendasi AI (BUY/SELL/HOLD) beserta confidence dan alasan. Disimpan ke riwayat `recommendations`. |
-| `/buy` | `/buy <pair> <harga> <jumlah>` | Menyiapkan order beli — **butuh konfirmasi** (lihat di bawah). |
-| `/sell` | `/sell <pair> <harga> <jumlah>` | Menyiapkan order jual — **butuh konfirmasi**. |
+| `/buy` | `/buy <pair> <harga> <jumlah>` atau `/buy <pair> <harga> idr <nominal>` | Menyiapkan order beli — **butuh konfirmasi** (lihat di bawah). Bentuk kedua menghitung jumlah koin otomatis dari nominal Rupiah (dibulatkan ke bawah sesuai increment pasar). |
+| `/sell` | `/sell <pair> <harga> <jumlah>` atau `/sell <pair> <harga> idr <nominal>` | Menyiapkan order jual — **butuh konfirmasi**. Sama seperti `/buy`, bisa pakai nominal Rupiah. |
 | `/orders` | `/orders` | 10 order terakhir milik Anda beserta status. |
 | `/order` | `/order <pair> <id>` | Detail satu order (harga, jumlah, status, broker ID). |
 | `/cancel` | `/cancel <pair> <id>` | Membatalkan order **dry-run** yang masih OPEN/PENDING_CONFIRMATION. (Order live belum bisa dibatalkan lewat bot.) |
@@ -323,6 +323,8 @@ Contoh sesi:
    → tekan CONFIRM
 /orders
 ```
+
+**Menentukan jumlah lewat nominal Rupiah:** jika Anda tidak familiar mengonversi ke satuan koin, gunakan bentuk `/buy <pair> <harga> idr <nominal>` — bot menghitung jumlah koin otomatis dari `nominal ÷ harga`, dibulatkan ke bawah sesuai increment jumlah pair tersebut. Contoh: `/buy btc_idr 950000000 idr 500000` menyiapkan order beli BTC senilai kira-kira Rp500.000 pada harga Rp950.000.000/BTC. Jumlah koin hasil perhitungan tetap ditampilkan di layar konfirmasi sebelum Anda menekan CONFIRM.
 
 ## Alur konfirmasi order
 

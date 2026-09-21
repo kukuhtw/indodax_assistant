@@ -23,6 +23,8 @@ Default `DRY_RUN=true` dan `TRADING_ENABLED=false`. Live trading saat ini dikunc
 
 `/start`, `/help`, `/status`, `/price btc_idr`, `/orderbook btc_idr`, `/balance`, `/portfolio`, `/recommend btc_idr`, `/buy btc_idr 100000000 0.001`, `/sell btc_idr 120000000 0.001`, `/orders`, `/risk`, `/setrisk 500000`, `/pause`, `/resume`, `/stop`.
 
+`/buy` dan `/sell` juga menerima nominal Rupiah langsung, jumlah koin dihitung otomatis: `/buy btc_idr 100000000 idr 500000`.
+
 `/stop` memblokir order baru dan tidak membatalkan open order. Periksa `/orders` untuk meninjau posisi. Emergency stop tidak dapat dihapus lewat bot; operator harus memeriksa keadaan dan meresetnya secara administratif.
 
 ## Arsitektur dan batasan
