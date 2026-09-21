@@ -8,7 +8,7 @@ from sqlalchemy import text
 from app.config import settings
 from app.database import Session
 from app.indodax.client import IndodaxClient
-from app.telegram.bot import build_bot
+from app.telegram.bot import COMMAND_LIST, build_bot
 
 
 @asynccontextmanager
@@ -20,6 +20,7 @@ async def lifespan(app: FastAPI):
         if settings.telegram_bot_token and settings.allowed_ids:
             bot = build_bot(broker, redis)
             await bot.initialize()
+            await bot.bot.set_my_commands(COMMAND_LIST)
             await bot.start()
             await bot.updater.start_polling()
         app.state.broker = broker

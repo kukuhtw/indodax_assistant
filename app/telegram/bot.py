@@ -13,10 +13,72 @@ from app.trading.risk import RiskRejected, positive_decimal
 from app.trading.service import audit, confirm, prepare
 
 
-HELP = ('/price <pair>, /orderbook <pair>, /balance, /portfolio, /recommend <pair>, '
-        '/buy <pair> <price> <amount>, /sell <pair> <price> <amount>, /orders, '
-        '/order <pair> <id>, /cancel <pair> <id>, /risk, /setrisk <max_order_idr>, '
-        '/pause, /resume, /stop, /status')
+START = (
+    '🤖 <b>Indodax AI Trading Assistant</b>\n'
+    'Mode default: <b>DRY-RUN</b> (simulasi, tidak ada dana nyata terpakai).\n\n'
+    'Bot ini <b>bukan nasihat keuangan</b> dan tidak menjanjikan keuntungan. '
+    'Rekomendasi AI dapat salah; trading memiliki risiko volatilitas, likuiditas, slippage, dan gangguan API.\n\n'
+    'Ketik /help untuk panduan lengkap perintah.'
+)
+
+HELP = (
+    '📖 <b>Panduan Perintah</b>\n\n'
+
+    '📊 <b>Data Pasar</b>\n'
+    '/price [pair] — harga terakhir\n'
+    '   <i>contoh:</i> /price btc_idr\n'
+    '/orderbook [pair] — 3 bid &amp; ask teratas\n'
+    '   <i>contoh:</i> /orderbook btc_idr\n'
+    '/recommend [pair] — rekomendasi AI (BUY/SELL/HOLD)\n'
+    '   <i>contoh:</i> /recommend btc_idr\n\n'
+
+    '💰 <b>Akun</b>\n'
+    '/balance atau /portfolio — saldo akun Indodax\n'
+    '/orders — 10 order terakhir Anda\n'
+    '/order [pair] [id] — detail satu order\n'
+    '   <i>contoh:</i> /order btc_idr 42\n\n'
+
+    '🛒 <b>Order</b> (wajib konfirmasi lewat tombol)\n'
+    '/buy [pair] [harga] [jumlah]\n'
+    '/sell [pair] [harga] [jumlah]\n'
+    '   <i>contoh:</i> /buy btc_idr 950000000 0.0005\n'
+    '/cancel [pair] [id] — batalkan order dry-run\n\n'
+
+    '⚠️ <b>Manajemen Risiko</b>\n'
+    '/risk — lihat batas risiko Anda saat ini\n'
+    '/setrisk [nilai_idr] — ubah batas nilai order maksimum\n'
+    '   <i>contoh:</i> /setrisk 500000\n\n'
+
+    '🛑 <b>Kontrol</b>\n'
+    '/pause — jeda order baru sementara\n'
+    '/resume — lanjutkan setelah /pause\n'
+    '/stop — EMERGENCY STOP (tidak bisa di-resume lewat bot)\n'
+    '/status — mode &amp; status saat ini\n\n'
+
+    'ℹ️ Order selalu <b>DRY-RUN</b> (simulasi) sampai fitur live trading selesai diuji. '
+    'Bukan nasihat keuangan; segala keputusan trading adalah risiko Anda sendiri.'
+)
+
+COMMAND_LIST = [
+    ('start', 'Mulai & info bot'),
+    ('help', 'Panduan lengkap perintah'),
+    ('status', 'Mode & status saat ini'),
+    ('price', 'Harga pair, mis: /price btc_idr'),
+    ('orderbook', 'Order book, mis: /orderbook btc_idr'),
+    ('balance', 'Saldo akun Indodax'),
+    ('portfolio', 'Sama seperti /balance'),
+    ('recommend', 'Rekomendasi AI, mis: /recommend btc_idr'),
+    ('buy', 'Order beli: /buy [pair] [harga] [jumlah]'),
+    ('sell', 'Order jual: /sell [pair] [harga] [jumlah]'),
+    ('orders', '10 order terakhir Anda'),
+    ('order', 'Detail order: /order [pair] [id]'),
+    ('cancel', 'Batalkan order dry-run: /cancel [pair] [id]'),
+    ('risk', 'Lihat batas risiko Anda'),
+    ('setrisk', 'Ubah batas order: /setrisk [nilai_idr]'),
+    ('pause', 'Jeda order baru sementara'),
+    ('resume', 'Lanjutkan setelah /pause'),
+    ('stop', 'EMERGENCY STOP (tidak bisa di-resume)'),
+]
 
 
 def dependencies(context):
@@ -47,12 +109,12 @@ def protected(fn):
 
 @protected
 async def start(update, context):
-    await update.effective_message.reply_text('Indodax AI Trading Assistant. Default DRY-RUN. Ini bukan nasihat investasi. /help')
+    await update.effective_message.reply_text(START, parse_mode='HTML')
 
 
 @protected
 async def help_command(update, context):
-    await update.effective_message.reply_text(HELP)
+    await update.effective_message.reply_text(HELP, parse_mode='HTML')
 
 
 @protected
